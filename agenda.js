@@ -1,10 +1,10 @@
-class Agenda {
+export class Agenda {
     #agendamentos;
 
     constructor(agendamentos = []) {
         this.#agendamentos = agendamentos;
     }
-    agendarConsulta() {
+    adicionarConsulta() {
         
     }
 }

@@ -15,6 +15,4 @@ class Paciente {
     get nome()           { return this.#nome;          }
     get cpf()            { return this.#cpf;           }
     get dataNascimento() { return this.#dataNascimento }
-
-
 }

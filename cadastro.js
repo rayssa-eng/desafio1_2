@@ -1,19 +1,17 @@
-class Cadastro {
+export class Cadastro {
     #pacientes;
 
     constructor(pacientes = []) {
         this.#pacientes = pacientes;
     }
 
-    cadastrarPaciente(paciente) {
-        // paciente = new Paciente(nome, cpf, dataNascimento);
-
+    adicionarPaciente(paciente) {
         if (!(paciente instanceof Paciente)) {
             throw new Error("deve-se adicionar um objeto do tipo Paciente.");
         }
 
-        this.#pacientes.push(paciente);
 
+        
         // verificar essa condicao
         if (!(this.#pacientes.includes(paciente))) {
             this.#pacientes.push(paciente);
@@ -25,6 +23,9 @@ class Cadastro {
 
     removerPaciente(cpf) {
         // if paciente has consulta agendada return false
+        // if paciente not in this.pacientes return false
+        // else return true
+
         this.#pacientes = this.#pacientes.filter(paciente => paciente.cpf !== cpf);
     }
 
@@ -36,15 +37,4 @@ class Cadastro {
 
         return sorted;
     }
-
-
-
-
-
-
-
-
-
-
-
 }

@@ -1,6 +1,6 @@
 const { DateTime, Duration } = require('luxon');
 
-class Consulta {
+export class Consulta {
     data;
     horaInicio;
     horaFim;
@@ -8,6 +8,6 @@ class Consulta {
     #paciente;
 
     constructor(data, horaFim, duracao, horaInicio, paciente) {
-
+        
     }
 }
