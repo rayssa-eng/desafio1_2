@@ -22,6 +22,4 @@ export class Consulta {
             throw new Error("Hora de término deve ser posterior à hora de início.");
         }
     }
-
-    get
 }

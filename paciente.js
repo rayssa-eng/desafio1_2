@@ -1,4 +1,7 @@
-class Paciente {
+import { DateTime } from 'luxon';
+
+
+export class Paciente {
     #nome;
     #cpf;
     #dataNascimento;

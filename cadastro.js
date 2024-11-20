@@ -1,3 +1,5 @@
+import { Paciente } from './paciente.js';
+
 export class Cadastro {
     #pacientes;
 
@@ -10,9 +12,6 @@ export class Cadastro {
             throw new Error("deve-se adicionar um objeto do tipo Paciente.");
         }
 
-
-        
-        // verificar essa condicao
         if (!(this.#pacientes.includes(paciente))) {
             this.#pacientes.push(paciente);
             return true;
@@ -36,5 +35,9 @@ export class Cadastro {
         });
 
         return sorted;
+    }
+
+    encontrarPacientePorCPF(cpf) {
+        return this.#pacientes.find(p => p.cpf === cpf);
     }
 }

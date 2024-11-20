@@ -3,6 +3,8 @@ const prompt = promptSync({ sigint: true });
 
 import  menuPrincipal  from "./menuPrincipal.js";
 import { Cadastro } from "./cadastro.js";
+import { Paciente } from "./paciente.js";
+
 import { DateTime } from 'luxon';
 
 const cadastroClinica = new Cadastro();
@@ -30,13 +32,14 @@ export class MenuCadastro {
         switch (opcao) {
             case 1:
                 this.novoCadastro();
+                this.start();
                 break;
             case 2:
                 this.excluirCadastro();
                 break;
             case 3:
                 cadastroClinica.listarPacientes(opcao);
-                break;// Add as many cases as needed
+                break;
             case 4:
                 cadastroClinica.listarPacientes(opcao);
                 break;
@@ -47,7 +50,6 @@ export class MenuCadastro {
                 console.log('Opção inválida.');
                 menuPrincipal.start();
         }
-
     }
 
     novoCadastro() {
@@ -61,21 +63,36 @@ export class MenuCadastro {
         const idade = hoje.diff(novaDataNascimento, 'years').years;
 
         if (idade < 13) {
-            console.error('Erro: paciente deve ter pelo menos 13 anos.')
+            console.error('Erro: paciente deve ter pelo menos 13 anos.');
+            console.log('--------------------------------------------------------------');
+
+            this.start();
         } else if (!novaDataNascimento.isValid) {
-            console.log('Data de nascimento inválida!');
-            return;
+            console.error('Data de nascimento inválida!');
+            console.log('--------------------------------------------------------------');
+
+            this.start();
         } 
 
-        novoPaciente   = new Paciente(novoNome, novoCPF, novaDataNascimento);
+        const novoPaciente = new Paciente(novoNome, novoCPF, novaDataNascimento);
 
         const novoCadastro = cadastroClinica.adicionarPaciente(novoPaciente);
 
         if (!novoCadastro) {
             console.error('Erro: CPF já cadastrado');
+            this.start();
         }
-
         console.log('Paciente cadastrado com sucesso!');
+    }
+
+    mostrarListaPacientes() {
+        let stringLista = '';
+
+        //se paciente tem consulta agendada -> mostrar agendamento
+        cadastro.forEach((paciente) => {
+            stringLista += `${paciente.cpf} ${paciente.nome} ${paciente.dataNascimento}\n`;
+        })
+        return string;
     }
 
     excluirCadastro() {

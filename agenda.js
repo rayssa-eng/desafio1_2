@@ -57,3 +57,6 @@ export class Agenda {
         console.log("-------------------------------------------------------------");
     }
 }
+
+const agendaConsultorio = new Agenda();
+export default agendaConsultorio;
