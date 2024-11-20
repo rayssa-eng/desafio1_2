@@ -9,7 +9,7 @@ class Paciente {
         // if (nome.length > 0) throw new Error
         this.#nome           = nome;
         this.#cpf            = cpf;
-        this.#dataNascimento = dataNascimento;
+        this.#dataNascimento = DateTime.fromISO(dataNascimento);
     }
 
     get nome()           { return this.#nome;          }

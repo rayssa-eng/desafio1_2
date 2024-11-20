@@ -1,5 +1,11 @@
+import promptSync from 'prompt-sync';
+const prompt = promptSync({ sigint: true });
+
+import menuPrincipal  from "./menuPrincipal.js";
+
+
 export class MenuAgenda {
-    showMenu() {
+    mostrarMenu() {
         console.log('Agenda');
         console.log('1-Agendar consulta');
         console.log('2-Cancelar agendamento');
@@ -8,25 +14,40 @@ export class MenuAgenda {
 
         const opcao = parseInt(prompt(""), 10);
 
+        console.log('--------------------------------------------------------------');
+
         return opcao;
     }
 
     handleOpcaoUsuario(opcao) {
-        if (opcao === 1) {
-            this.novaConsulta();
-        } else if (opcao === 2) {
-            const menuAgenda = new MenuAgenda();
-            menuAgenda.showMenu();
-        } else if (opcao === 3) {
-            console.log("Encerrando programa...");
-            process.exit(0);
-        } else {
-            console.log('Opção inválida.');
-            this.start();
+        switch (opcao) {
+            case 1:
+                this.novaConsulta();
+                break;
+            case 2:
+                menuAgenda.mostrarMenu();
+                break;
+            case 3:
+                console.log("Listando agenda");
+                break;
+            case 4:
+                menuPrincipal.start();
+                break;
+            default:
+                console.log('Opção inválida.');
+                this.start();
         }
     }
 
     novaConsulta() {
 
     }
+
+    start() {
+        const opcao = this.mostrarMenu();
+        this.handleOpcaoUsuario(opcao);
+    }
 }
+
+const menuAgenda = new MenuAgenda();
+export default menuAgenda;

@@ -1,6 +1,8 @@
-const prompt = require('prompt-sync')({ sigint: true });
-import { MenuCadastro } from "./menuCadastro.js";
-import { MenuAgenda } from "./menuAgenda.js";
+import promptSync from 'prompt-sync';
+const prompt = promptSync({ sigint: true });
+
+import  menuCadastro  from "./menuCadastro.js";
+import  menuAgenda  from "./menuAgenda.js";
 
 
 export class MenuPrincipal {
@@ -12,30 +14,33 @@ export class MenuPrincipal {
 
         const opcao = parseInt(prompt(""), 10);
 
+        console.log('--------------------------------------------------------------');
+
         return opcao;
     }
 
     handleOpcaoUsuario(opcao) {
-        if (opcao === 1) {
-            const menuCadastro = new MenuCadastro();
-            menuCadastro.showMenu()
-        } else if (opcao === 2) {
-            const menuAgenda = new MenuAgenda();
-            menuAgenda.showMenu();
-        } else if (opcao === 3) {
-            console.log("Encerrando programa...");
-            process.exit(0);
-        } else {
-            console.log('Opção inválida.');
-            this.start();
+        switch (opcao) {
+            case 1:
+                menuCadastro.start()
+                break;
+            case 2:
+                menuAgenda.mostrarMenu();
+                break;
+            case 3:
+                console.log("Encerrando programa...");
+                process.exit(0);
+            default:
+                console.log('Opção inválida.');
+                this.start();
         }
     }
 
     start() {
-        const opcao = this.showMenu();
-        this.handleUserChoice(opcao);
+        const opcao = this.mostrarMenu();
+        this.handleOpcaoUsuario(opcao);
     }
 }
 
 const menuPrincipal = new MenuPrincipal();
-menuPrincipal.start();
+export default menuPrincipal;
