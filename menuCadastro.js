@@ -62,6 +62,8 @@ export class MenuCadastro {
 
         if (!(this.validaCPF(novoCPF))) {
             console.error("CPF inválido.");
+            console.log('--------------------------------------------------------------');
+
             this.start();
         }
         
@@ -74,7 +76,9 @@ export class MenuCadastro {
         const novoNome        = prompt("Nome: ");
 
         if (!novoNome || novoNome.length < 5) {
-            console.error("Nome deve ter pelo menos 5 caracteres.");
+            console.error("\nNome deve ter pelo menos 5 caracteres.");
+            console.log('--------------------------------------------------------------');
+
             this.start();
         }
 
@@ -91,7 +95,7 @@ export class MenuCadastro {
 
             this.start();
         } else if (!novaDataNascimento.isValid) {
-            console.error('Data de nascimento inválida!');
+            console.error('\nData de nascimento inválida!');
             console.log('--------------------------------------------------------------');
 
             this.start();
