@@ -66,21 +66,36 @@ export class Agenda {
         consultasFiltradas.sort((a, b) => a.horaInicio - b.horaInicio);
 
         
-        console.log("-------------------------------------------------------------");
-        console.log("Data        H.Ini  H.Fim  Tempo  Nome                          Dt.Nasc.");
-        console.log("-------------------------------------------------------------");
+        console.log("-------------------------------------------------------------------------");
+        console.log("Data        H.Ini  H.Fim  Tempo  Nome                         Dt.Nasc.");
+        console.log("-------------------------------------------------------------------------");
 
         consultasFiltradas.forEach(consulta => {
             if (!consulta.paciente) {
                 console.error("Erro: Consulta sem paciente associado.", consulta);
                 return; // Skip this iteration if paciente is undefined
             }
-
-            const tempo = DateTime.fromMillis(consulta.duracao * 60000).toFormat("hh:mm"); // Convert duration to hh:mm format
-            console.log(`${consulta.data.toFormat("dd/MM/yyyy")}  ${consulta.horaInicio.toFormat("HH:mm")} ${consulta.horaFim.toFormat("HH:mm")} ${tempo} ${consulta.paciente.nome.padEnd(30)} ${consulta.paciente.dataNascimento.toFormat("dd/MM/yyyy")}`);
+        
+            // Assuming `duracao` is in milliseconds, convert to minutes first
+            const duracaoEmMinutos = consulta.duracao / 60000;
+        
+            // Correct calculation for tempo (duration)
+            const hours = Math.floor(duracaoEmMinutos / 60);
+            const minutes = Math.round(duracaoEmMinutos % 60);
+            const tempo = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+        
+            // Adjusted table alignment
+            console.log(
+                `${consulta.data.toFormat("dd/MM/yyyy")}  ` +
+                `${consulta.horaInicio.toFormat("HH:mm")}  ` +
+                `${consulta.horaFim.toFormat("HH:mm")}  ` +
+                `${tempo}  ` +
+                `${consulta.paciente.nome.padEnd(25)}  ` +
+                `${consulta.paciente.dataNascimento.toFormat("dd/MM/yyyy")}`
+            );
         });
 
-        console.log("-------------------------------------------------------------");
+        console.log("-------------------------------------------------------------------------");
     }
 
     getConsultasPorPaciente(paciente) {

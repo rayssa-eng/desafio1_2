@@ -38,18 +38,11 @@ export class MenuAgenda {
                     const dataFinal = prompt('Data final (dd/MM/yyyy): ');
 
                     agendaConsultorio.mostrarAgenda(dataInicial, dataFinal, filtro);
-                    console.error(e);
-                    this.start();
-                    }
-                }
-
-                try {
-                    agendaConsultorio.mostrarAgenda(null, null, filtro);
-                } catch (e) {
-                    console.error(e);
                     this.start();
                 }
 
+                agendaConsultorio.mostrarAgenda(null, null, filtro);
+                this.start();
                 break;
             case 4:
                 menuPrincipal.start();
