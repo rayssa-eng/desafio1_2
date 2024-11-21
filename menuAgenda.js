@@ -1,9 +1,10 @@
 import promptSync from 'prompt-sync';
 const prompt = promptSync({ sigint: true });
+import { Consulta }          from "./consulta.js";
 
-import menuPrincipal     from "./menuPrincipal.js";
-import agendaConsultorio from "./agenda.js";
-import Consulta          from "./consulta.js";
+import menuPrincipal       from "./menuPrincipal.js";
+import agendaConsultorio   from "./agenda.js";
+import cadastroConsultorio from './cadastro.js';
 
 
 export class MenuAgenda {
@@ -27,16 +28,45 @@ export class MenuAgenda {
                 this.novaConsulta();
                 break;
             case 2:
-                menuAgenda.mostrarMenu();
+                this.cancelarConsulta();
                 break;
             case 3:
-                console.log("Listando agenda");
+                const filtro = prompt("\nApresentar a agenda T-Toda ou P-Periodo: ");
+
+                if (filtro === 'P') {
+                    const dataInicial = prompt('Data inicial (dd/MM/yyyy): ');
+                    const dataFinal = prompt('Data final (dd/MM/yyyy): ');
+
+                    agendaConsultorio.mostrarAgenda(dataInicial, dataFinal, filtro);
+                    console.error(e);
+                    this.start();
+                    }
+                }
+
+                try {
+                    agendaConsultorio.mostrarAgenda(null, null, filtro);
+                } catch (e) {
+                    console.error(e);
+                    this.start();
+                }
+
                 break;
             case 4:
                 menuPrincipal.start();
                 break;
             default:
-                console.log('Opção inválida.');
+                // const consultas = agendaConsultorio.consultas;
+
+                // consultas.forEach(consulta => {
+                //     console.log('consulta: ', consulta);
+                //     console.log('paciente da consulta: ', consulta.paciente);
+                //     console.log('nome do paciente da consulta: ', consulta.paciente.nome);
+
+                // })
+                // console.log("Consultas: ", agendaConsultorio.consultas);
+
+                console.log('\nOpção inválida.\n');
+                console.log('----------------------------------------------------------\n');
                 this.start();
         }
     }
@@ -44,18 +74,21 @@ export class MenuAgenda {
     novaConsulta() {
         const pacienteCPF  = prompt("CPF: ");
 
-        const paciente = cadastro.findPacienteByCPF(pacienteCPF);
+        const paciente = cadastroConsultorio.getPacientePorCPF(pacienteCPF);
 
         if (!paciente) {
             console.error("Erro: paciente não cadastrado");
+            console.log('--------------------------------------------------------------\n');
 
             // reiniciar menu da agenda
             this.start();
         }
 
-        const dataConsulta = prompt("Data da consulta: ");
-        const horaInicio   = prompt("Hora inicial: ");
-        const horaFim      = prompt("Hora final: ");
+        console.log(`\nAgendando consulta para: ${paciente.nome}`);
+
+        const dataConsulta = prompt("Data da consulta (yyyy-MM-dd): ");
+        const horaInicio   = prompt("Hora inicial (HHmm): ");
+        const horaFim      = prompt("Hora final (HHmm): ");
         
         const consulta = new Consulta(
             dataConsulta,
@@ -64,12 +97,58 @@ export class MenuAgenda {
             paciente
         );
 
-        if (agendaConsultorio.agendarConsulta(consulta)) {
-            console.log("Agendamento realizado com sucesso!");
+        if (agendaConsultorio.adicionarConsulta(consulta)) {
+            console.log("\nAgendamento realizado com sucesso!");
+            console.log('--------------------------------------------------------------\n');
+
+            this.start();
         } else {
-            console.error("Erro: já existe uma consulta agendada nesse horário");
+            console.error("\nErro: já existe uma consulta agendada nesse horário");
+            console.log('--------------------------------------------------------------\n');
+
             this.start();
         }
+    }
+
+    cancelarConsulta() {
+        const pacienteCPF = prompt("CPF: ");
+        const paciente = cadastroConsultorio.getPacientePorCPF(pacienteCPF);
+
+        console.log(`\nCancelando agendamento para ${paciente.nome}`);
+    
+        if (!paciente) {
+            console.error("Erro: paciente não cadastrado");
+            console.log('--------------------------------------------------------------\n');
+
+            this.start();
+            return;
+        }
+    
+        const dataConsulta = prompt("Data da consulta (yyyy-MM-dd): ");
+        const horaInicio = prompt("Hora inicial (HHmm): ");
+    
+        const consultaEncontrada = agendaConsultorio
+            .getConsultasPorPaciente(paciente)
+            .find(consulta =>
+                consulta.data.toISODate() === dataConsulta &&
+                consulta.horaInicio.toFormat("HHmm") === horaInicio);
+    
+        if (!consultaEncontrada) {
+            console.error("Erro: agendamento não encontrado");
+            console.log('--------------------------------------------------------------\n');
+
+            this.start();
+            return;
+        }
+    
+        agendaConsultorio.removerConsulta(consultaEncontrada);
+    
+        const consultasRestantes = agendaConsultorio.getConsultasPorPaciente(paciente);
+    
+        console.log("Agendamento cancelado com sucesso!");
+        console.log('--------------------------------------------------------------\n');
+
+        this.start();
     }
 
     start() {

@@ -1,13 +1,15 @@
+import { DateTime } from 'luxon';
 import promptSync from 'prompt-sync';
 const prompt = promptSync({ sigint: true });
 
 import  menuPrincipal  from "./menuPrincipal.js";
-import { Cadastro } from "./cadastro.js";
+import agendaConsultorio from "./agenda.js";
+import cadastroConsultorio from "./cadastro.js";
+
 import { Paciente } from "./paciente.js";
 
-import { DateTime } from 'luxon';
 
-const cadastroClinica = new Cadastro();
+
 
 
 export class MenuCadastro {
@@ -36,12 +38,15 @@ export class MenuCadastro {
                 break;
             case 2:
                 this.excluirCadastro();
+                this.start();
                 break;
             case 3:
-                cadastroClinica.listarPacientes(opcao);
+                this.mostrarListaPacientes(cadastroConsultorio, agendaConsultorio, opcao);
+                this.start();
                 break;
             case 4:
-                cadastroClinica.listarPacientes(opcao);
+                this.mostrarListaPacientes(cadastroConsultorio, agendaConsultorio, opcao);
+                this.start();
                 break;
             case 5:
                 menuPrincipal.start();
@@ -53,7 +58,14 @@ export class MenuCadastro {
     }
 
     novoCadastro() {
-        const novoCPF         = prompt("CPF: ");
+        const novoCPF = prompt("CPF: ");
+        
+        if (cadastroConsultorio.getPacientePorCPF(novoCPF)) {
+            console.error('Erro: CPF já cadastrado');
+            console.log('--------------------------------------------------------------');
+            this.start();
+        }
+
         const novoNome        = prompt("Nome: ");
         const dataNascimento  = prompt("Data de nascimento (formato: DD/MM/YYYY): ");
 
@@ -76,29 +88,57 @@ export class MenuCadastro {
 
         const novoPaciente = new Paciente(novoNome, novoCPF, novaDataNascimento);
 
-        const novoCadastro = cadastroClinica.adicionarPaciente(novoPaciente);
+        const novoCadastro = cadastroConsultorio.adicionarPaciente(novoPaciente);
 
         if (!novoCadastro) {
-            console.error('Erro: CPF já cadastrado');
+            console.error('Erro ao cadastrar novo paciente');
+            console.log('--------------------------------------------------------------');
             this.start();
         }
         console.log('Paciente cadastrado com sucesso!');
+        console.log('--------------------------------------------------------------');
     }
 
-    mostrarListaPacientes() {
-        let stringLista = '';
+    mostrarListaPacientes(cadastroConsultorio, agenda, ordenacao) {
+        let listaOrdenada = cadastroConsultorio.listarPacientes(ordenacao);
 
-        //se paciente tem consulta agendada -> mostrar agendamento
-        cadastro.forEach((paciente) => {
-            stringLista += `${paciente.cpf} ${paciente.nome} ${paciente.dataNascimento}\n`;
-        })
-        return string;
+        let stringLista = '';
+        const linhaSeparadora = "----------------------------------------------------------------------";
+    
+        stringLista += `${linhaSeparadora}\n`;
+        stringLista += `CPF                   Nome                           Dt.Nasc. Idade\n`;
+        stringLista += `${linhaSeparadora}\n`;
+    
+        listaOrdenada.forEach((paciente) => {
+            const idade = DateTime.now().diff(paciente.dataNascimento, 'years').years.toFixed(0);
+    
+            stringLista += `${paciente.cpf.padEnd(20)} ${paciente.nome.padEnd(30)} ${paciente.dataNascimento.toFormat('dd/MM/yyyy')} ${idade}\n`;
+    
+            const consultas = agenda.getConsultasPorPaciente(paciente);
+            if (consultas.length > 0) {
+                consultas.forEach(consulta => {
+                    stringLista += `Agendado para: ${consulta.data.toFormat('dd/MM/yyyy')}\n`;
+                    stringLista += `${consulta.horaInicio.toFormat('HH:mm')} às ${consulta.horaFim.toFormat('HH:mm')}\n`;
+                });
+            }
+        });
+    
+        stringLista += `${linhaSeparadora}\n`;
+        console.log(stringLista);
+        return stringLista;
     }
 
     excluirCadastro() {
-        const exCPF  = prompt("CPF: ");
+        const exCPF       = prompt("CPF: ");
+        const exPaciente  = getPacientePorCPF(exCPF);
 
-        cadastroClinica.removerPaciente(exCPF);
+        remocao = cadastroConsultorio.removerPaciente(exPaciente);
+
+        if (!remocao) {
+            console.error('Erro: paciente não cadastrado');
+            console.log('--------------------------------------------------------------');
+            this.start();
+        }
     }
 
     start() {

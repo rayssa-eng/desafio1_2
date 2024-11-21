@@ -25,7 +25,7 @@ export class MenuPrincipal {
                 menuCadastro.start()
                 break;
             case 2:
-                menuAgenda.mostrarMenu();
+                menuAgenda.start();
                 break;
             case 3:
                 console.log("Encerrando programa...");

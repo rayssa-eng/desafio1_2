@@ -1,4 +1,5 @@
 import { DateTime } from "luxon";
+import { Consulta } from './consulta.js';
 
 export class Agenda {
     #consultas;
@@ -6,6 +7,8 @@ export class Agenda {
     constructor() {
         this.#consultas = [];
     }
+
+    get consultas() { return this.#consultas; }
 
     adicionarConsulta(consulta) {
         if (!(consulta instanceof Consulta)) {
@@ -23,16 +26,35 @@ export class Agenda {
         }
 
         this.#consultas.push(consulta);
+
+        return true;
     }
 
-    mostrarAgenda(dataInicial = null, dataFinal = null) {
-        const hoje = DateTime.now();
+    removerConsulta(consulta) {
+        if (!(consulta instanceof Consulta)) {
+            throw new Error("Deve-se remover um objeto do tipo Consulta.");
+        }
+    
+        const index = this.#consultas.findIndex(c => c === consulta);
+    
+        if (index === -1) {
+            console.error("Erro: agendamento não encontrado.");
+            return false;
+        }
+    
+        this.#consultas.splice(index, 1);
+        return true;
+    }
+    
 
-        const tipo = prompt("Apresentar a agenda T-Toda ou P-Periodo: ");
+    mostrarAgenda(dataInicial = null, dataFinal = null, filtro) {
+        const hoje = DateTime.now();
 
         let consultasFiltradas = this.#consultas;
 
-        if (tipo === 'P') {
+        if (filtro === 'P') {
+            console.log(`Data inicial: ${dataInicial}`);
+            console.log(`Data final: ${dataFinal}`);
             const dataInicialParsed = DateTime.fromFormat(dataInicial, 'dd/MM/yyyy');
             const dataFinalParsed = DateTime.fromFormat(dataFinal, 'dd/MM/yyyy');
 
@@ -43,18 +65,26 @@ export class Agenda {
 
         consultasFiltradas.sort((a, b) => a.horaInicio - b.horaInicio);
 
-        console.log(`Data inicial: ${dataInicial}`);
-        console.log(`Data final: ${dataFinal}`);
+        
         console.log("-------------------------------------------------------------");
         console.log("Data        H.Ini  H.Fim  Tempo  Nome                          Dt.Nasc.");
         console.log("-------------------------------------------------------------");
 
         consultasFiltradas.forEach(consulta => {
+            if (!consulta.paciente) {
+                console.error("Erro: Consulta sem paciente associado.", consulta);
+                return; // Skip this iteration if paciente is undefined
+            }
+
             const tempo = DateTime.fromMillis(consulta.duracao * 60000).toFormat("hh:mm"); // Convert duration to hh:mm format
             console.log(`${consulta.data.toFormat("dd/MM/yyyy")}  ${consulta.horaInicio.toFormat("HH:mm")} ${consulta.horaFim.toFormat("HH:mm")} ${tempo} ${consulta.paciente.nome.padEnd(30)} ${consulta.paciente.dataNascimento.toFormat("dd/MM/yyyy")}`);
         });
 
         console.log("-------------------------------------------------------------");
+    }
+
+    getConsultasPorPaciente(paciente) {
+        return this.#consultas.filter(consulta => consulta.paciente === paciente);
     }
 }
 

@@ -1,4 +1,7 @@
-const { DateTime, Duration } = require('luxon');
+
+
+import { DateTime } from 'luxon';
+import { Paciente } from './paciente.js';
 
 export class Consulta {
     data;
@@ -7,7 +10,7 @@ export class Consulta {
     duracao;
     #paciente;
 
-    constructor(data, horaFim, duracao, horaInicio, paciente) {
+    constructor(data, horaInicio, horaFim, paciente) {
         if (!(paciente instanceof Paciente)) {
             throw new Error("deve-se adicionar um objeto do tipo Paciente.");
         }
@@ -22,4 +25,6 @@ export class Consulta {
             throw new Error("Hora de término deve ser posterior à hora de início.");
         }
     }
+
+    get paciente() { return this.#paciente; }
 }
