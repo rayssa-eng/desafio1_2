@@ -101,12 +101,7 @@ export class MenuCadastro {
             this.start();
         } 
 
-        try {
-            const novoPaciente = new Paciente(novoNome, novoCPF, novaDataNascimento);
-        } catch (e) {
-            console.error(e.message);
-            this.start();
-        }
+        const novoPaciente = new Paciente(novoNome, novoCPF, novaDataNascimento);
 
         const novoCadastro = cadastroConsultorio.adicionarPaciente(novoPaciente);
 
