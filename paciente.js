@@ -8,10 +8,6 @@ export class Paciente {
 
     constructor(nome, cpf, dataNascimento) {
 
-        if (!(this.validaCPF)) {
-            throw new Error("CPF inválido.");
-        }
-
         this.#nome              = nome;
         this.#cpf               = cpf;
         this.#dataNascimento    = DateTime.fromISO(dataNascimento);
